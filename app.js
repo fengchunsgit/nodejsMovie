@@ -7,12 +7,23 @@ var _=require('underscore')
 var Movie=require('./models/movie')
 var User=require('./models/user')
 DB_URL = 'mongodb://localhost:12345/imooc';
+var session = require('express-session'); //如果要使用session，需要单独包含这个模块
+var cookieParser = require('cookie-parser'); //如果要使用cookie，需要显式包含这个模块
+var mongoStore=require('connect-mongo')(session)
 
 mongoose.connect(DB_URL);
 
 app.set('views','./views/pages')
 app.set('view engine','jade')
 app.use(bodyParser.json())
+app.use(cookieParser())
+app.use(session({
+  secret:'imooc',
+  store:new mongoStore({
+    url:DB_URL,
+    collection:'sessions'
+  })
+}))
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname,'public/')))
 app.use('/static',express.static('static'))
@@ -24,6 +35,7 @@ app.listen(port);
 
 //index
 app.get('/',function(req,res){
+  console.log(req.session.user)
   Movie.fetch(function(err,movies){
     if(err){
       console.log(err)
@@ -227,7 +239,7 @@ app.post('/user/signin',function(req,res){
         console.log(err)
       }
       if(isMatch){
-        console.log('match')
+        req.session.user=user
         return res.redirect('/')
       }else{
         console.log('not match')
