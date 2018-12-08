@@ -50,7 +50,16 @@ UserSchema.statics={
     .findOne({_id:id})
     .sort('meta.updateAt')
     .exec(cb)
-  }   
+  }  
+}
+
+UserSchema.methods={
+  comparePassword:function(_password,cb){
+    bcrypt.compare(_password,this.password,function(err,isMatch){
+      if(err) return cb(err)
+      cb(null,isMatch)
+    })
+  }
 }
 
 module.exports=UserSchema
