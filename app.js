@@ -5,6 +5,7 @@ var bodyParser = require('body-parser')
 var mongoose=require('mongoose')
 var _=require('underscore')
 var Movie=require('./models/movie')
+var User=require('./models/user')
 DB_URL = 'mongodb://localhost:12345/imooc';
 
 mongoose.connect(DB_URL);
@@ -167,4 +168,45 @@ app.get('/admin/update/:id',function(req,res){
 })
 
 console.log('started at http://localhost:'+port)
+
+// user signup  page
+app.post('/user/signup',function(req,res){
+  var _user=req.body.user
+  // var _user=req.params.user
+  User.findOne({name:_user.name},function(err,user){
+    if(err){
+      console.log(err)
+    }
+    if(user){
+      return res.redirect('/')
+    }else{
+      var user=new User(_user)
+      user.save(function(err,user){
+        if(err){
+          console.log(err)
+        }
+        //console.log(user)
+        res.redirect('/admin/userlist')
+      })
+    }
+  })
+
+
+})
+
+//list user
+app.get('/admin/userlist',function(req,res){
+
+  User.fetch(function(err,users){
+    if(err){
+      console.log(err)
+    }
+    res.render('userlist',{
+      title:'movie 用户列表',
+      users:users
+    })
+  })
+})
+
+
 
