@@ -7,17 +7,13 @@ var _=require('underscore')
 var Movie=require('./models/movie')
 DB_URL = 'mongodb://localhost:12345/imooc';
 
-/**
- * 连接
- */
 mongoose.connect(DB_URL);
-
 
 app.set('views','./views/pages')
 app.set('view engine','jade')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(express.static(path.join(__dirname,'bower_components/')))
+app.use(express.static(path.join(__dirname,'public/')))
 app.use('/static',express.static('static'))
 app.locals.moment=require('moment')
 const port=3000
@@ -36,14 +32,6 @@ app.get('/',function(req,res){
       movies:movies
     })
   })
-
-      // res.render('index',{
-      //   title:'首页',
-      // movies:[{
-      //   title:'机械战警',
-      //   _id:1,
-      //   poster:'http://img31.mtime.cn/pi/2013/12/13/112514.36500695_1000X1000.jpg'
-      // },
       // {
       //   title:'毒液',
       //   _id:2,
@@ -62,20 +50,6 @@ app.get('/movie/:id',function(req,res){
       movie:movie
     })
   })
-
-  // res.render('detail',{
-  //   title:'详情',
-  //   movie:{
-  //     title:'机械战警',
-  //     doctor:'何塞',
-  //     country:'美国',
-  //     year:2014,
-  //     poster:'http://img31.mtime.cn/pi/2013/12/13/112514.36500695_1000X1000.jpg',
-  //     flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-  //     summary:'毒液金句: 埃迪，你的身体，你的一切都是我的！ 埃迪，我开始有点喜欢你了！ 埃迪你敢说我是寄生虫，道歉！快向我道歉！ 埃迪，我这么做都是因为你',
-  //     language:'英语'
-  //   }
-  // })
 })
 
 //admin
@@ -140,6 +114,31 @@ app.post('/admin/movie/new',function(req,res){
 //list
 app.get('/admin/list',function(req,res){
 
+  Movie.fetch(function(err,movies){
+    if(err){
+      console.log(err)
+    }
+    res.render('list',{
+      title:'movie 详情',
+      movies:movies
+    })
+  })
+})
+
+//list delete
+app.delete('/admin/list',function(req,res){
+  var id=req.query.id
+
+  if(id){
+    Movie.remove({_id:id},function(err,movie){
+      if(err){
+        console.log(err)
+      }else{
+        res.json({success:1})
+      }
+    })
+  }
+  
   Movie.fetch(function(err,movies){
     if(err){
       console.log(err)
