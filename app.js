@@ -31,12 +31,18 @@ app.locals.moment=require('moment')
 const port=3000
 app.listen(port);
 
+//pre handle user
+app.use(function(req,res,next){
+  var _user=req.session.user
+  if(_user){
+    app.locals.user=_user
+  }
+  return next()
+})
 
 
 //index
 app.get('/',function(req,res){
-  console.log(req.session.user)
-
   var _user=req.session.user
   if(_user){
     app.locals.user=_user
