@@ -15,11 +15,13 @@ module.exports=function(app){
   //index page
   app.get('/',Index.index)
 
-  //signup
+  //user
   app.post('/user/signup',User.signup)
   app.post('/user/signin',User.signin)
   app.get('/logout',User.logout)
   app.get('/admin/userlist',User.list)
+  app.get('/signin',User.showSignin)
+  app.get('/signup',User.showSignup)
 
   //movie
   app.get('/movie/:id',Movie.detail)
