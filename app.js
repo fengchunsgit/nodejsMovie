@@ -12,7 +12,7 @@ var mongoStore=require('connect-mongo')(session)
 
 mongoose.connect(DB_URL);
 
-app.set('views','./views/pages')
+app.set('views','./app/views/pages')
 app.set('view engine','jade')
 app.use(bodyParser.json())
 app.use(cookieParser())
