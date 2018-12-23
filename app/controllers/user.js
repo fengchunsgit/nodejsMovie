@@ -39,16 +39,15 @@ exports.signup=function(req,res){
 
 //list user
 exports.list=function(req,res){
-
-  User.fetch(function(err,users){
-    if(err){
-      console.log(err)
-    }
-    res.render('userlist',{
-      title:'movie 用户列表',
-      users:users
+    User.fetch(function(err,users){
+      if(err){
+        console.log(err)
+      }
+      res.render('userlist',{
+        title:'movie 用户列表',
+        users:users
+      })
     })
-  })
 }
 
 //signin
@@ -84,4 +83,23 @@ exports.logout=function(req,res){
   delete req.session.user
   //delete app.locals.user
   return res.redirect('/')
+}
+
+//user middleware signinRequired
+exports.signinRequired=function(req,res,next){
+  var user =req.session.user
+
+  if(!user){
+    return res.redirect('/signin')
+  }
+  next()
+}
+//user middleware adminRequired
+exports.adminRequired=function(req,res,next){
+  var user =req.session.user
+
+  if(user.role<=10){
+    return res.redirect('/signin')
+  }
+  next()
 }
